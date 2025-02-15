@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "vmptf-lb4"
+version = "0.1.0"
+description = ""
+authors = ["RuslanUC <dev_ruslan_uc@protonmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.115.8"
+uvicorn = "^0.34.0"
+pydantic = "^2.10.6"
+tortoise-orm = {extras = ["accel"], version = "^0.24.0"}
+bcrypt = "^4.2.1"
+aerich = "^0.8.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
