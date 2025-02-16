@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Query
 
+from ..dependencies import JwtAuthUserDepN
 from ..models import Category
 from ..schemas.categories import CategoryResponse, SearchCategoriesQuery, CategoryCreateRequest
 from ..schemas.common import PaginationResponse
@@ -29,8 +30,7 @@ async def search_categories(query: SearchCategoriesQuery = Query()):
     }
 
 
-# TODO: add jwt auth
-@router.post("", response_model=CategoryResponse)
+@router.post("", response_model=CategoryResponse, dependencies=[JwtAuthUserDepN])
 async def create_category(data: CategoryCreateRequest):
     if await Category.filter(name=data.name).exists():
         raise MultipleErrorsException("Category with this name already exists!")

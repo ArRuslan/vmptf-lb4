@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Query
 
+from ..dependencies import JwtAuthUserDepN
 from ..models import Category, Product
 from ..schemas.common import PaginationResponse
 from ..schemas.products import ProductResponse, ProductCreateRequest, SearchProductsQuery
@@ -36,8 +37,7 @@ async def search_products(query: SearchProductsQuery = Query()):
     }
 
 
-# TODO: add jwt auth
-@router.post("", response_model=ProductResponse)
+@router.post("", response_model=ProductResponse, dependencies=[JwtAuthUserDepN])
 async def create_product(data: ProductCreateRequest):
     if (category := await Category.get_or_none(id=data.category_id)) is None:
         raise MultipleErrorsException("Category with this name does not exist!")
