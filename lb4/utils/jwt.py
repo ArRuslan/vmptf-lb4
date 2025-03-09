@@ -38,7 +38,7 @@ class JWT:
             assert_((exp := header_dict.get("exp", 0)) > time() or exp == 0)
             signature = JWT._b64decode(signature)
         except (IndexError, ValueError):
-            return
+            return None
 
         sig = f"{header}.{payload}".encode("utf8")
         sig = hmac.new(secret, sig, sha512).digest()

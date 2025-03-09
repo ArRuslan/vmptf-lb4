@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi.params import Header, Depends
 
-from .models import Session, User, Hotel, Product, Order
+from .models import Session, User, Product, Order
 from .utils.multiple_errors_exception import MultipleErrorsException
 
 
@@ -25,21 +25,21 @@ JwtAuthUserDepN = Depends(jwt_auth_user)
 JwtAuthUserDep = Annotated[User, JwtAuthUserDepN]
 
 
-async def product_dep(product_id: int) -> Hotel:
+async def product_dep(product_id: int) -> Product:
     if (product := await Product.get_or_none(id=product_id)) is None:
         raise MultipleErrorsException("Unknown product.", 404)
 
     return product
 
 
-ProductDep = Annotated[Hotel, Depends(product_dep)]
+ProductDep = Annotated[Product, Depends(product_dep)]
 
 
-async def order_dep(order_id: int, user: JwtAuthUserDep) -> Hotel:
+async def order_dep(order_id: int, user: JwtAuthUserDep) -> Order:
     if (order := await Order.get_or_none(id=order_id, user=user)) is None:
         raise MultipleErrorsException("Unknown order.", 404)
 
     return order
 
 
-OrderDep = Annotated[Hotel, Depends(order_dep)]
+OrderDep = Annotated[Order, Depends(order_dep)]

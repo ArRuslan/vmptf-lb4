@@ -9,7 +9,7 @@ from tortoise import Tortoise
 from tortoise.contrib.fastapi import RegisterTortoise
 
 from lb4 import config
-from lb4.routes import auth, categories, products, orders
+from lb4.routes import auth, categories, products, orders, reviews
 from lb4.utils.multiple_errors_exception import MultipleErrorsException
 
 
@@ -52,7 +52,7 @@ app.include_router(auth.router)
 app.include_router(categories.router)
 app.include_router(products.router)
 app.include_router(orders.router)
-# TODO: add orders and reviews
+app.include_router(reviews.router)
 
 
 @app.exception_handler(MultipleErrorsException)
