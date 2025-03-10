@@ -1,11 +1,12 @@
 from pydantic import BaseModel
 
-from lb4.schemas.common import PaginationQuery
+from .products import ProductResponse
 
 
 class OrderResponse(BaseModel):
     id: int
-    name: str
+    products: list[ProductResponse]
+    created_at: int
 
 
 class OrderCreateRequest(BaseModel):

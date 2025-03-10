@@ -13,9 +13,4 @@ BCRYPT_ROUNDS = environ.get("BCRYPT_ROUNDS", 12)
 
 JWT_KEY = b64decode(environ.get("JWT_KEY", b64encode(urandom(32)).decode("utf8")))
 
-RECAPTCHA_SECRET = environ.get("RECAPTCHA_SECRET")
-if RECAPTCHA_SECRET is None:  # pragma: no cover
-    import warnings
-    warnings.warn("RECAPTCHA_SECRET is not set!")
-
 AUTH_JWT_TTL = _try_parse_int(environ.get("AUTH_JWT_TTL", 86400), 86400)

@@ -30,5 +30,5 @@ class Review(Model):
             "product_id": self.product_id,
             "rating": self.rating,
             "text": self.text,
-            "created_at": self.created_at,
+            "created_at": int(self.created_at.timestamp()),
         }

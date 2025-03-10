@@ -42,5 +42,7 @@ async def create_product(data: ProductCreateRequest):
     if (category := await Category.get_or_none(id=data.category_id)) is None:
         raise MultipleErrorsException("Category with this name does not exist!")
 
-    product = await Product.create(name=data.name, description=data.description, price=data.price, caegory=category)
+    product = await Product.create(
+        name=data.name, description=data.description, price=data.price, category=category, manufacturer=data.manufacturer
+    )
     return product.to_json()

@@ -3,7 +3,7 @@ from fastapi import APIRouter, Query
 from ..dependencies import JwtAuthUserDepN, JwtAuthUserDep, ProductDep
 from ..models import Order, Review
 from ..schemas.common import PaginationResponse, PaginationQuery
-from ..schemas.reviews import ReviewResponse, ReviewCreateRequest
+from ..schemas.reviews import ReviewResponse, ReviewCreateRequest, ReviewEditRequest
 from ..utils.multiple_errors_exception import MultipleErrorsException
 
 router = APIRouter(prefix="/reviews")
@@ -28,7 +28,7 @@ async def get_product_reviews(product: ProductDep, query: PaginationQuery = Quer
 
 @router.post("/{product_id}", response_model=ReviewResponse)
 async def create_review(product: ProductDep, user: JwtAuthUserDep, data: ReviewCreateRequest):
-    if not await Order.filter(user=user, products=product).exists():
+    if not await Order.filter(user=user, products__id=product.id).exists():
         raise MultipleErrorsException("You need to order this product first!", 400)
     if await Review.filter(user=user, product=product).exists():
         raise MultipleErrorsException("You already have reviewed this product!", 400)
@@ -44,12 +44,12 @@ async def create_review(product: ProductDep, user: JwtAuthUserDep, data: ReviewC
 
 
 @router.patch("/{product_id}", response_model=ReviewResponse)
-async def edit_review(product: ProductDep, user: JwtAuthUserDep, data: ReviewCreateRequest):
+async def edit_review(product: ProductDep, user: JwtAuthUserDep, data: ReviewEditRequest):
     review = await Review.get_or_none(user=user, product=product).select_related("user")
     if review is None:
         raise MultipleErrorsException("Unknown review.", 404)
 
-    to_update = data.model_dump()
+    to_update = data.model_dump(exclude_defaults=True)
     if not to_update:
         return await review.to_json()
 
@@ -58,7 +58,7 @@ async def edit_review(product: ProductDep, user: JwtAuthUserDep, data: ReviewCre
 
 
 @router.delete("/{product_id}", status_code=204)
-async def delete_review(product: ProductDep, user: JwtAuthUserDep, data: ReviewCreateRequest):
+async def delete_review(product: ProductDep, user: JwtAuthUserDep):
     review = await Review.get_or_none(user=user, product=product).select_related("user")
     if review is None:
         raise MultipleErrorsException("Unknown review.", 404)

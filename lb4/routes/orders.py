@@ -28,8 +28,8 @@ async def get_orders(user: JwtAuthUserDep, query: PaginationQuery = Query()):
 
 @router.post("", response_model=OrderResponse, dependencies=[JwtAuthUserDepN])
 async def create_order(user: JwtAuthUserDep, data: OrderCreateRequest):
-    products = await Product.filter(id__in=data.product_ids)
-    if not products or len(products) != data.product_ids:
+    products = await Product.filter(id__in=data.product_ids).select_related("category")
+    if not products or len(products) != len(data.product_ids):
         raise MultipleErrorsException("Unknown product!", 404)
 
     order = await Order.create(user=user)
